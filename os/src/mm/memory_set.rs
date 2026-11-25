@@ -36,6 +36,7 @@ lazy_static! {
 /// address space
 pub struct MemorySet {
     page_table: PageTable,
+    anonymous: BTreeMap<VirtPageNum, FrameTracker>,
     areas: Vec<MapArea>,
 }
 
@@ -45,6 +46,7 @@ impl MemorySet {
         Self {
             page_table: PageTable::new(),
             areas: Vec::new(),
+            anonymous: BTreeMap::new(),
         }
     }
     /// Get the page table token
@@ -229,6 +231,72 @@ impl MemorySet {
             asm!("sfence.vma");
         }
     }
+    // Restrict anonymous mappings to the lower canonical Sv39 half used by apps.
+    fn anonymous_range(start: usize, len: usize) -> Option<VPNRange> {
+        const USER_END: usize = 1 << 38;
+        let end = start.checked_add(len)?;
+        if start % PAGE_SIZE != 0 || start >= USER_END || end > USER_END {
+            return None;
+        }
+        let end_page = end.div_ceil(PAGE_SIZE);
+        Some(VPNRange::new(
+            VirtPageNum(start / PAGE_SIZE),
+            VirtPageNum(end_page),
+        ))
+    }
+
+    /// Map zeroed anonymous pages after validating the entire range.
+    pub fn mmap_area(&mut self, start: usize, len: usize, prot: usize) -> bool {
+        if prot == 0 || prot & !7 != 0 {
+            return false;
+        }
+        let Some(range) = Self::anonymous_range(start, len) else {
+            return false;
+        };
+        if range
+            .into_iter()
+            .any(|vpn| self.translate(vpn).is_some_and(|pte| pte.is_valid()))
+        {
+            return false;
+        }
+        let flags = PTEFlags::from_bits((prot as u8) << 1).unwrap() | PTEFlags::U;
+        for vpn in range {
+            let mapped = frame_alloc().and_then(|frame| {
+                self.page_table
+                    .try_map(vpn, frame.ppn, flags)
+                    .then_some(frame)
+            });
+            if let Some(frame) = mapped {
+                self.anonymous.insert(vpn, frame);
+            } else {
+                for mapped_vpn in VPNRange::new(range.get_start(), vpn) {
+                    self.page_table.unmap(mapped_vpn);
+                    self.anonymous.remove(&mapped_vpn);
+                }
+                return false;
+            }
+        }
+        true
+    }
+
+    /// Unmap anonymous pages, allowing subranges and rejecting holes.
+    pub fn munmap_area(&mut self, start: usize, len: usize) -> bool {
+        let Some(range) = Self::anonymous_range(start, len) else {
+            return false;
+        };
+        if range
+            .into_iter()
+            .any(|vpn| !self.anonymous.contains_key(&vpn))
+        {
+            return false;
+        }
+        for vpn in range {
+            self.page_table.unmap(vpn);
+            self.anonymous.remove(&vpn);
+        }
+        true
+    }
+
     /// Translate a virtual page number to a page table entry
     pub fn translate(&self, vpn: VirtPageNum) -> Option<PageTableEntry> {
         self.page_table.translate(vpn)
@@ -256,7 +324,19 @@ impl MemorySet {
             .iter_mut()
             .find(|area| area.vpn_range.get_start() == start.floor())
         {
-            area.append_to(&mut self.page_table, new_end.ceil());
+            let end = new_end.ceil();
+            if end < area.vpn_range.get_end()
+                || VPNRange::new(area.vpn_range.get_end(), end)
+                    .into_iter()
+                    .any(|vpn| {
+                        self.page_table
+                            .translate(vpn)
+                            .is_some_and(|pte| pte.is_valid())
+                    })
+            {
+                return false;
+            }
+            area.append_to(&mut self.page_table, end);
             true
         } else {
             false

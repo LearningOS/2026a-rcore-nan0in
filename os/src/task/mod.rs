@@ -198,7 +198,36 @@ pub fn current_trap_cx() -> &'static mut TrapContext {
     TASK_MANAGER.get_current_trap_cx()
 }
 
-/// Change the current 'Running' task's program break
+/// Map anonymous memory in the running task.
+pub fn mmap_current(start: usize, len: usize, prot: usize) -> bool {
+    let mut inner = TASK_MANAGER.inner.exclusive_access();
+    let current = inner.current_task;
+    inner.tasks[current].memory_set.mmap_area(start, len, prot)
+}
+/// Unmap anonymous memory in the running task.
+pub fn munmap_current(start: usize, len: usize) -> bool {
+    let mut inner = TASK_MANAGER.inner.exclusive_access();
+    let current = inner.current_task;
+    inner.tasks[current].memory_set.munmap_area(start, len)
+}
+/// Record a syscall before dispatch.
+pub fn record_syscall(id: usize) {
+    let mut inner = TASK_MANAGER.inner.exclusive_access();
+    let current = inner.current_task;
+    if let Some(count) = inner.tasks[current].syscall_counts.get_mut(id) {
+        *count = count.saturating_add(1);
+    }
+}
+/// Get this task's count for a syscall number.
+pub fn syscall_count(id: usize) -> usize {
+    let inner = TASK_MANAGER.inner.exclusive_access();
+    inner.tasks[inner.current_task]
+        .syscall_counts
+        .get(id)
+        .copied()
+        .unwrap_or(0)
+}
+/// Change the running task's program break.
 pub fn change_program_brk(size: i32) -> Option<usize> {
     TASK_MANAGER.change_current_program_brk(size)
 }
