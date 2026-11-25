@@ -27,6 +27,8 @@ pub fn sys_yield() -> isize {
     0
 }
 
+// Lab 2 reference (permission checks and cross-page time values):
+// https://learningos.cn/rCore-Tutorial-Guide/chapter4/7exercise.html
 // Check the user bit as well as the requested access before touching RAM.
 fn user_page(table: &PageTable, addr: usize, access: PTEFlags) -> Option<crate::mm::PhysPageNum> {
     let va = VirtAddr::from(addr);

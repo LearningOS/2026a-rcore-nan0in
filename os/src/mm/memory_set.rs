@@ -245,6 +245,10 @@ impl MemorySet {
         ))
     }
 
+    // Lab 2 reference (mmap/munmap alignment, length and protection bits):
+    // https://learningos.cn/rCore-Tutorial-Guide/chapter4/7exercise.html
+    // Linux mmap entry point for comparison; the lab guide defines this ABI:
+    // https://elixir.bootlin.com/linux/v7.3.1/A/ident/sys_mmap
     /// Map zeroed anonymous pages after validating the entire range.
     pub fn mmap_area(&mut self, start: usize, len: usize, prot: usize) -> bool {
         if prot == 0 || prot & !7 != 0 {
