@@ -9,7 +9,9 @@ pub struct TaskManager {
     ready_queue: VecDeque<Arc<TaskControlBlock>>,
 }
 
-/// A simple FIFO scheduler.
+// Lab 3 reference (choose the smallest stride; increment by priority weight):
+// https://learningos.cn/rCore-Tutorial-Guide/chapter5/4exercise.html
+/// Stride scheduler, with FIFO ties.
 impl TaskManager {
     ///Creat an empty TaskManager
     pub fn new() -> Self {
@@ -23,7 +25,19 @@ impl TaskManager {
     }
     /// Take a process out of the ready queue
     pub fn fetch(&mut self) -> Option<Arc<TaskControlBlock>> {
-        self.ready_queue.pop_front()
+        let index = self
+            .ready_queue
+            .iter()
+            .enumerate()
+            .min_by_key(|(_, task)| task.inner_exclusive_access().stride)?
+            .0;
+        let task = self.ready_queue.remove(index)?;
+        {
+            let mut inner = task.inner_exclusive_access();
+            // u128 leaves ample headroom even with maximum user priority.
+            inner.stride += (1u128 << 63) / u128::from(inner.priority);
+        }
+        Some(task)
     }
 }
 
