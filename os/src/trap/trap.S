@@ -9,6 +9,12 @@
     .globl __alltraps
     .globl __restore
     .align 2
+    # References for U/S traps (including ecall), supervisor CSRs and sret:
+    # https://learningos.cn/rCore-Tutorial-Guide/chapter2/4trap-handling.html
+    # The RISC-V Reader (Chinese edition):
+    # http://riscvbook.com/chinese/RISC-V-Reader-Chinese-v2p1.pdf
+    # On entry from U-mode, hardware saves the previous privilege in sstatus.SPP
+    # and the trap PC in sepc. The first swap uses sscratch to find the kernel stack.
 __alltraps:
     csrrw sp, sscratch, sp
     # now sp->kernel stack, sscratch->user stack
@@ -39,7 +45,9 @@ __alltraps:
 
 __restore:
     # now sp->kernel stack(after allocated), sscratch->user stack
-    # restore sstatus/sepc
+    # sret uses sstatus.SPP for the return privilege and sepc for the return PC.
+    # Stage user x2 in sscratch: sp must still point to the saved TrapContext
+    # until the other registers have been restored.
     ld t0, 32*8(sp)
     ld t1, 33*8(sp)
     ld t2, 2*8(sp)
@@ -56,6 +64,6 @@ __restore:
     .endr
     # release TrapContext on kernel stack
     addi sp, sp, 34*8
-    # now sp->kernel stack, sscratch->user stack
+    # Restore user sp and leave the kernel stack top in sscratch for the next trap.
     csrrw sp, sscratch, sp
     sret

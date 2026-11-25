@@ -7,6 +7,11 @@
 .endm
     .section .text
     .globl __switch
+    # Reference: https://learningos.cn/rCore-Tutorial-Guide/chapter3/2task-switching.html
+    # __switch saves a kernel TaskContext (ra, sp, s0-s11) and resumes a
+    # different kernel control flow with ret; __switch does not change privilege.
+    # __alltraps / __restore instead save and restore a user TrapContext,
+    # including sstatus and sepc, for the return to user mode.
 __switch:
     # __switch(
     #     current_task_cx_ptr: *mut TaskContext,
