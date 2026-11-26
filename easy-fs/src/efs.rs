@@ -130,6 +130,11 @@ impl EasyFileSystem {
         self.inode_bitmap.alloc(&self.block_device).unwrap() as u32
     }
 
+    /// Release an unlinked inode once there are no open handles.
+    pub(crate) fn dealloc_inode(&mut self, id: u32) {
+        self.inode_bitmap.dealloc(&self.block_device, id as usize);
+    }
+
     /// Allocate a data block
     pub fn alloc_data(&mut self) -> u32 {
         self.data_bitmap.alloc(&self.block_device).unwrap() as u32 + self.data_area_start_block

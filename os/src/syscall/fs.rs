@@ -1,5 +1,5 @@
 //! File and filesystem-related syscalls
-use crate::fs::{open_file, OpenFlags, Stat};
+use crate::fs::{link_file, open_file, unlink_file, OpenFlags, Stat};
 use crate::mm::{translated_byte_buffer, translated_str, UserBuffer};
 use crate::task::{current_task, current_user_token};
 
@@ -75,29 +75,49 @@ pub fn sys_close(fd: usize) -> isize {
     0
 }
 
-/// YOUR JOB: Implement fstat.
-pub fn sys_fstat(_fd: usize, _st: *mut Stat) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_fstat NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+// Lab 4 reference (fstat, linkat and unlinkat contracts):
+// https://learningos.cn/rCore-Tutorial-Guide/chapter6/4exercise.html
+/// Report the disk inode, type and current hard-link count.
+pub fn sys_fstat(fd: usize, st: *mut Stat) -> isize {
+    let task = current_task().unwrap();
+    let file = task
+        .inner_exclusive_access()
+        .fd_table
+        .get(fd)
+        .and_then(|file| file.clone());
+    let Some(stat) = file.and_then(|file| file.stat()) else {
+        return -1;
+    };
+    let mut bytes = [0; core::mem::size_of::<Stat>()];
+    bytes[..8].copy_from_slice(&stat.dev.to_ne_bytes());
+    bytes[8..16].copy_from_slice(&stat.ino.to_ne_bytes());
+    bytes[16..20].copy_from_slice(&stat.mode.bits().to_ne_bytes());
+    bytes[20..24].copy_from_slice(&stat.nlink.to_ne_bytes());
+    if super::process::copy_to_user(current_user_token(), st as usize, &bytes) {
+        0
+    } else {
+        -1
+    }
 }
 
-/// YOUR JOB: Implement linkat.
-pub fn sys_linkat(_old_name: *const u8, _new_name: *const u8) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_linkat NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+/// Create another directory entry referring to the same inode.
+pub fn sys_linkat(old_name: *const u8, new_name: *const u8) -> isize {
+    let token = current_user_token();
+    let old = translated_str(token, old_name);
+    let new = translated_str(token, new_name);
+    if link_file(&old, &new) {
+        0
+    } else {
+        -1
+    }
 }
 
-/// YOUR JOB: Implement unlinkat.
-pub fn sys_unlinkat(_name: *const u8) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_unlinkat NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+/// Remove a directory entry.
+pub fn sys_unlinkat(name: *const u8) -> isize {
+    let name = translated_str(current_user_token(), name);
+    if unlink_file(&name) {
+        0
+    } else {
+        -1
+    }
 }

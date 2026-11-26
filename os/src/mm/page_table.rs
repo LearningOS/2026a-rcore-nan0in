@@ -99,7 +99,7 @@ impl PageTable {
                 break;
             }
             if !pte.is_valid() {
-                let frame = frame_alloc().unwrap();
+                let frame = frame_alloc()?;
                 *pte = PageTableEntry::new(frame.ppn, PTEFlags::V);
                 self.frames.push(frame);
             }
@@ -128,9 +128,18 @@ impl PageTable {
     /// set the map between virtual page number and physical page number
     #[allow(unused)]
     pub fn map(&mut self, vpn: VirtPageNum, ppn: PhysPageNum, flags: PTEFlags) {
-        let pte = self.find_pte_create(vpn).unwrap();
-        assert!(!pte.is_valid(), "vpn {:?} is mapped before mapping", vpn);
+        assert!(self.try_map(vpn, ppn, flags), "cannot map {:?}", vpn);
+    }
+    /// Install a leaf, returning false when the mapping could not be created.
+    pub fn try_map(&mut self, vpn: VirtPageNum, ppn: PhysPageNum, flags: PTEFlags) -> bool {
+        let Some(pte) = self.find_pte_create(vpn) else {
+            return false;
+        };
+        if pte.is_valid() {
+            return false;
+        }
         *pte = PageTableEntry::new(ppn, flags | PTEFlags::V);
+        true
     }
     /// remove the map between virtual page number and physical page number
     #[allow(unused)]

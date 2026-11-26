@@ -1,5 +1,7 @@
 //! Process management syscalls
 //!
+use crate::mm::{PTEFlags, PageTable, VirtAddr};
+use crate::timer::get_time_us;
 use alloc::sync::Arc;
 
 use crate::{
@@ -102,33 +104,87 @@ pub fn sys_waitpid(pid: isize, exit_code_ptr: *mut i32) -> isize {
     // ---- release current PCB automatically
 }
 
-/// YOUR JOB: get time with second and microsecond
-/// HINT: You might reimplement it with virtual memory management.
-/// HINT: What if [`TimeVal`] is splitted by two pages ?
-pub fn sys_get_time(_ts: *mut TimeVal, _tz: usize) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_get_time NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+// Check the user bit as well as the requested access before touching RAM.
+fn user_page(table: &PageTable, addr: usize, access: PTEFlags) -> Option<crate::mm::PhysPageNum> {
+    let va = VirtAddr::from(addr);
+    if usize::from(va) != addr {
+        return None;
+    }
+    let entry = table.translate(va.floor())?;
+    entry
+        .flags()
+        .contains(PTEFlags::V | PTEFlags::U | access)
+        .then(|| entry.ppn())
 }
 
-/// YOUR JOB: Implement mmap.
-pub fn sys_mmap(_start: usize, _len: usize, _port: usize) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_mmap NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+// First validate all pages, so a bad later page never causes a partial write.
+pub(super) fn copy_to_user(token: usize, start: usize, bytes: &[u8]) -> bool {
+    let Some(end) = start.checked_add(bytes.len()) else {
+        return false;
+    };
+    let table = PageTable::from_token(token);
+    for addr in (start..end).step_by(crate::config::PAGE_SIZE) {
+        if user_page(&table, addr, PTEFlags::W).is_none() {
+            return false;
+        }
+    }
+    if end > start && user_page(&table, end - 1, PTEFlags::W).is_none() {
+        return false;
+    }
+    let mut addr = start;
+    while addr < end {
+        let ppn = user_page(&table, addr, PTEFlags::W).unwrap();
+        let offset = VirtAddr::from(addr).page_offset();
+        let chunk = (end - addr).min(crate::config::PAGE_SIZE - offset);
+        ppn.get_bytes_array()[offset..offset + chunk]
+            .copy_from_slice(&bytes[addr - start..addr - start + chunk]);
+        addr += chunk;
+    }
+    true
 }
 
-/// YOUR JOB: Implement munmap.
-pub fn sys_munmap(_start: usize, _len: usize) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_munmap NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+/// Get time with second and microsecond, including across page boundaries.
+pub fn sys_get_time(ts: *mut TimeVal, _tz: usize) -> isize {
+    let us = get_time_us();
+    let words = [us / 1_000_000, us % 1_000_000];
+    // Two native-endian usize fields match the user ABI on RV64.
+    let mut bytes = [0; core::mem::size_of::<TimeVal>()];
+    let width = core::mem::size_of::<usize>();
+    bytes[..width].copy_from_slice(&words[0].to_ne_bytes());
+    bytes[width..].copy_from_slice(&words[1].to_ne_bytes());
+    if copy_to_user(current_user_token(), ts as usize, &bytes) {
+        0
+    } else {
+        -1
+    }
+}
+
+/// Create an anonymous user mapping.
+pub fn sys_mmap(start: usize, len: usize, prot: usize) -> isize {
+    if current_task()
+        .unwrap()
+        .inner_exclusive_access()
+        .memory_set
+        .mmap_area(start, len, prot)
+    {
+        0
+    } else {
+        -1
+    }
+}
+
+/// Remove an anonymous user mapping.
+pub fn sys_munmap(start: usize, len: usize) -> isize {
+    if current_task()
+        .unwrap()
+        .inner_exclusive_access()
+        .memory_set
+        .munmap_area(start, len)
+    {
+        0
+    } else {
+        -1
+    }
 }
 
 /// change data segment size
@@ -141,21 +197,35 @@ pub fn sys_sbrk(size: i32) -> isize {
     }
 }
 
-/// YOUR JOB: Implement spawn.
-/// HINT: fork + exec =/= spawn
-pub fn sys_spawn(_path: *const u8) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_spawn NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+/// Load a new child directly from an executable, without cloning its address space.
+pub fn sys_spawn(path: *const u8) -> isize {
+    let path = translated_str(current_user_token(), path);
+    let Some(inode) = open_file(path.as_str(), OpenFlags::RDONLY) else {
+        return -1;
+    };
+    let image = inode.read_all();
+    if !image.starts_with(b"\x7fELF") {
+        return -1;
+    }
+    let data = image.as_slice();
+    let parent = current_task().unwrap();
+    let child = Arc::new(crate::task::TaskControlBlock::new(data));
+    let pid = child.getpid();
+    {
+        let mut inner = child.inner_exclusive_access();
+        inner.parent = Some(Arc::downgrade(&parent));
+        inner.fd_table = parent.inner_exclusive_access().fd_table.clone();
+    }
+    parent.inner_exclusive_access().children.push(child.clone());
+    add_task(child);
+    pid as isize
 }
 
-// YOUR JOB: Set task priority.
-pub fn sys_set_priority(_prio: isize) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_set_priority NOT IMPLEMENTED",
-        current_task().unwrap().pid.0
-    );
-    -1
+/// Set the running process's stride-scheduling priority.
+pub fn sys_set_priority(prio: isize) -> isize {
+    if prio < 2 {
+        return -1;
+    }
+    current_task().unwrap().inner_exclusive_access().priority = prio as u64;
+    prio
 }

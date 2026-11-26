@@ -4,11 +4,12 @@
 //!
 //! `UPSafeCell<OSInodeInner>` -> `OSInode`: for static `ROOT_INODE`,we
 //! need to wrap `OSInodeInner` into `UPSafeCell`
-use super::File;
+use super::{File, Stat, StatMode};
 use crate::drivers::BLOCK_DEVICE;
 use crate::mm::UserBuffer;
 use crate::sync::UPSafeCell;
-use alloc::sync::Arc;
+use alloc::collections::BTreeMap;
+use alloc::sync::{Arc, Weak};
 use alloc::vec::Vec;
 use bitflags::*;
 use easy_fs::{EasyFileSystem, Inode};
@@ -25,12 +26,55 @@ pub struct OSInode {
 /// The OS inode inner in 'UPSafeCell'
 pub struct OSInodeInner {
     offset: usize,
+    inode: Arc<OpenInode>,
+}
+
+// All independent open descriptions share a lifetime handle, but not offsets.
+struct OpenInode {
+    id: u32,
     inode: Arc<Inode>,
+}
+
+lazy_static! {
+    static ref OPEN_INODES: UPSafeCell<BTreeMap<u32, Weak<OpenInode>>> =
+        unsafe { UPSafeCell::new(BTreeMap::new()) };
+}
+
+impl Drop for OpenInode {
+    fn drop(&mut self) {
+        OPEN_INODES.exclusive_access().remove(&self.id);
+        if ROOT_INODE.link_count(self.id) == 0 {
+            ROOT_INODE.reclaim_unlinked(self.id);
+        }
+    }
+}
+
+/// Add a hard link in the root directory.
+pub fn link_file(old: &str, new: &str) -> bool {
+    ROOT_INODE.link(old, new)
+}
+
+/// Delete a name; a still-open file is reclaimed by its last handle.
+pub fn unlink_file(name: &str) -> bool {
+    let Some(id) = ROOT_INODE.unlink(name) else {
+        return false;
+    };
+    if !OPEN_INODES.exclusive_access().contains_key(&id) && ROOT_INODE.link_count(id) == 0 {
+        ROOT_INODE.reclaim_unlinked(id);
+    }
+    true
 }
 
 impl OSInode {
     /// create a new inode in memory
     pub fn new(readable: bool, writable: bool, inode: Arc<Inode>) -> Self {
+        let id = inode.id();
+        let mut open = OPEN_INODES.exclusive_access();
+        let inode = open.get(&id).and_then(Weak::upgrade).unwrap_or_else(|| {
+            let handle = Arc::new(OpenInode { id, inode });
+            open.insert(id, Arc::downgrade(&handle));
+            handle
+        });
         Self {
             readable,
             writable,
@@ -44,7 +88,7 @@ impl OSInode {
         buffer.resize(512, 0);
         let mut v: Vec<u8> = Vec::new();
         loop {
-            let len = inner.inode.read_at(inner.offset, &mut buffer);
+            let len = inner.inode.inode.read_at(inner.offset, &mut buffer);
             if len == 0 {
                 break;
             }
@@ -126,6 +170,16 @@ pub fn open_file(name: &str, flags: OpenFlags) -> Option<Arc<OSInode>> {
 }
 
 impl File for OSInode {
+    fn stat(&self) -> Option<Stat> {
+        let id = self.inner.exclusive_access().inode.id;
+        Some(Stat {
+            dev: 0,
+            ino: id.into(),
+            mode: StatMode::FILE,
+            nlink: ROOT_INODE.link_count(id),
+            pad: [0; 7],
+        })
+    }
     fn readable(&self) -> bool {
         self.readable
     }
@@ -136,7 +190,7 @@ impl File for OSInode {
         let mut inner = self.inner.exclusive_access();
         let mut total_read_size = 0usize;
         for slice in buf.buffers.iter_mut() {
-            let read_size = inner.inode.read_at(inner.offset, *slice);
+            let read_size = inner.inode.inode.read_at(inner.offset, *slice);
             if read_size == 0 {
                 break;
             }
@@ -149,7 +203,7 @@ impl File for OSInode {
         let mut inner = self.inner.exclusive_access();
         let mut total_write_size = 0usize;
         for slice in buf.buffers.iter() {
-            let write_size = inner.inode.write_at(inner.offset, *slice);
+            let write_size = inner.inode.inode.write_at(inner.offset, *slice);
             assert_eq!(write_size, slice.len());
             inner.offset += write_size;
             total_write_size += write_size;
