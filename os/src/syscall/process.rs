@@ -1,3 +1,5 @@
+use crate::mm::{PTEFlags, PageTable, VirtAddr};
+use crate::timer::get_time_us;
 use crate::{
     fs::{open_file, OpenFlags},
     mm::{translated_ref, translated_refmut, translated_str},
@@ -148,19 +150,61 @@ pub fn sys_kill(pid: usize, signal: u32) -> isize {
 
 /// get_time syscall
 ///
-/// YOUR JOB: get time with second and microsecond
-/// HINT: You might reimplement it with virtual memory management.
-/// HINT: What if [`TimeVal`] is splitted by two pages ?
-pub fn sys_get_time(_ts: *mut TimeVal, _tz: usize) -> isize {
-    trace!(
-        "kernel:pid[{}] sys_get_time NOT IMPLEMENTED",
-        current_task().unwrap().process.upgrade().unwrap().getpid()
-    );
-    -1
+// Check the user bit as well as the requested access before touching RAM.
+fn user_page(table: &PageTable, addr: usize, access: PTEFlags) -> Option<crate::mm::PhysPageNum> {
+    let va = VirtAddr::from(addr);
+    if usize::from(va) != addr {
+        return None;
+    }
+    let entry = table.translate(va.floor())?;
+    entry
+        .flags()
+        .contains(PTEFlags::V | PTEFlags::U | access)
+        .then(|| entry.ppn())
 }
 
-/// mmap syscall
-///
+// First validate all pages, so a bad later page never causes a partial write.
+pub(super) fn copy_to_user(token: usize, start: usize, bytes: &[u8]) -> bool {
+    let Some(end) = start.checked_add(bytes.len()) else {
+        return false;
+    };
+    let table = PageTable::from_token(token);
+    for addr in (start..end).step_by(crate::config::PAGE_SIZE) {
+        if user_page(&table, addr, PTEFlags::W).is_none() {
+            return false;
+        }
+    }
+    if end > start && user_page(&table, end - 1, PTEFlags::W).is_none() {
+        return false;
+    }
+    let mut addr = start;
+    while addr < end {
+        let ppn = user_page(&table, addr, PTEFlags::W).unwrap();
+        let offset = VirtAddr::from(addr).page_offset();
+        let chunk = (end - addr).min(crate::config::PAGE_SIZE - offset);
+        ppn.get_bytes_array()[offset..offset + chunk]
+            .copy_from_slice(&bytes[addr - start..addr - start + chunk]);
+        addr += chunk;
+    }
+    true
+}
+
+/// Get time with second and microsecond, including across page boundaries.
+pub fn sys_get_time(ts: *mut TimeVal, _tz: usize) -> isize {
+    let us = get_time_us();
+    let words = [us / 1_000_000, us % 1_000_000];
+    // Two native-endian usize fields match the user ABI on RV64.
+    let mut bytes = [0; core::mem::size_of::<TimeVal>()];
+    let width = core::mem::size_of::<usize>();
+    bytes[..width].copy_from_slice(&words[0].to_ne_bytes());
+    bytes[width..].copy_from_slice(&words[1].to_ne_bytes());
+    if copy_to_user(current_user_token(), ts as usize, &bytes) {
+        0
+    } else {
+        -1
+    }
+}
+
 /// YOUR JOB: Implement mmap.
 pub fn sys_mmap(_start: usize, _len: usize, _port: usize) -> isize {
     trace!(

@@ -9,3 +9,6 @@ pub use condvar::Condvar;
 pub use mutex::{Mutex, MutexBlocking, MutexSpin};
 pub use semaphore::Semaphore;
 pub use up::UPSafeCell;
+
+mod deadlock;
+pub(crate) use deadlock::{would_deadlock, ResourceState};

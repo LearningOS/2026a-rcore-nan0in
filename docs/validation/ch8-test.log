@@ -1,0 +1,814 @@
+make: Entering directory './ch8/ci-user'
+Backing up original files to temp-* dirs
+make[1]: Entering directory './ch8/os'
+     Removed 0 files
+make[1]: Leaving directory './ch8/os'
+make[1]: Entering directory './ch8/ci-user/user'
+     Removed 0 files
+make[1]: Leaving directory './ch8/ci-user/user'
+     Removed 0 files
+(rustup target list | grep "riscv64gc-unknown-none-elf (installed)") || rustup target add riscv64gc-unknown-none-elf
+riscv64gc-unknown-none-elf (installed)
+cargo install cargo-binutils --locked
+    Blocking waiting for file lock on package cache
+    Updating crates.io index
+     Ignored package `cargo-binutils v0.4.0` is already installed, use --force to override
+rustup component add rust-src
+info: component rust-src is up to date
+rustup component add llvm-tools-preview
+info: component llvm-tools is up to date
+find user/src/bin -name "*.rs" | xargs -I {} sh -c 'sed -i.bak 's/OK/OK1419/g' {} && rm -rf {}.bak'
+find user/src/bin -name "*.rs" | xargs -I {} sh -c 'sed -i.bak 's/passed/passed1419/g' {} && rm -rf {}.bak'
+find check -name "*.py" | xargs -I {} sh -c 'sed -i.bak 's/OK/OK1419/g' {} && rm -rf {}.bak'
+find check -name "*.py" | xargs -I {} sh -c 'sed -i.bak 's/passed/passed1419/g' {} && rm -rf {}.bak'
+python3 overwrite.py 8
+make -C user build BASE=2 TEST=8 CHAPTER=8
+make[1]: Entering directory './ch8/ci-user/user'
+     Removed 0 files
+target/riscv64gc-unknown-none-elf/release/ch2b_bad_address target/riscv64gc-unknown-none-elf/release/ch2b_bad_instructions target/riscv64gc-unknown-none-elf/release/ch2b_bad_register target/riscv64gc-unknown-none-elf/release/ch2b_hello_world target/riscv64gc-unknown-none-elf/release/ch2b_power_3 target/riscv64gc-unknown-none-elf/release/ch2b_power_5 target/riscv64gc-unknown-none-elf/release/ch2b_power_7 target/riscv64gc-unknown-none-elf/release/ch3_sleep target/riscv64gc-unknown-none-elf/release/ch3_sleep1 target/riscv64gc-unknown-none-elf/release/ch3_trace target/riscv64gc-unknown-none-elf/release/ch3b_yield0 target/riscv64gc-unknown-none-elf/release/ch3b_yield1 target/riscv64gc-unknown-none-elf/release/ch3b_yield2 target/riscv64gc-unknown-none-elf/release/ch4_mmap0 target/riscv64gc-unknown-none-elf/release/ch4_mmap1 target/riscv64gc-unknown-none-elf/release/ch4_mmap2 target/riscv64gc-unknown-none-elf/release/ch4_mmap3 target/riscv64gc-unknown-none-elf/release/ch4_trace1 target/riscv64gc-unknown-none-elf/release/ch4_unmap target/riscv64gc-unknown-none-elf/release/ch4_unmap2 target/riscv64gc-unknown-none-elf/release/ch4b_sbrk target/riscv64gc-unknown-none-elf/release/ch5_exit0 target/riscv64gc-unknown-none-elf/release/ch5_exit1 target/riscv64gc-unknown-none-elf/release/ch5_getpid target/riscv64gc-unknown-none-elf/release/ch5_setprio target/riscv64gc-unknown-none-elf/release/ch5_spawn0 target/riscv64gc-unknown-none-elf/release/ch5_spawn1 target/riscv64gc-unknown-none-elf/release/ch5_stride target/riscv64gc-unknown-none-elf/release/ch5_stride0 target/riscv64gc-unknown-none-elf/release/ch5_stride1 target/riscv64gc-unknown-none-elf/release/ch5_stride2 target/riscv64gc-unknown-none-elf/release/ch5_stride3 target/riscv64gc-unknown-none-elf/release/ch5_stride4 target/riscv64gc-unknown-none-elf/release/ch5_stride5 target/riscv64gc-unknown-none-elf/release/ch5_usertest target/riscv64gc-unknown-none-elf/release/ch5b_exit target/riscv64gc-unknown-none-elf/release/ch5b_forktest target/riscv64gc-unknown-none-elf/release/ch5b_forktest2 target/riscv64gc-unknown-none-elf/release/ch5b_forktest_simple target/riscv64gc-unknown-none-elf/release/ch5b_forktree target/riscv64gc-unknown-none-elf/release/ch5b_initproc target/riscv64gc-unknown-none-elf/release/ch5b_user_shell target/riscv64gc-unknown-none-elf/release/ch5b_usertest target/riscv64gc-unknown-none-elf/release/ch6_file0 target/riscv64gc-unknown-none-elf/release/ch6_file1 target/riscv64gc-unknown-none-elf/release/ch6_file2 target/riscv64gc-unknown-none-elf/release/ch6_file3 target/riscv64gc-unknown-none-elf/release/ch6_usertest target/riscv64gc-unknown-none-elf/release/ch6b_cat target/riscv64gc-unknown-none-elf/release/ch6b_filetest_simple target/riscv64gc-unknown-none-elf/release/ch6b_initproc target/riscv64gc-unknown-none-elf/release/ch6b_user_shell target/riscv64gc-unknown-none-elf/release/ch6b_usertest target/riscv64gc-unknown-none-elf/release/ch7_usertest target/riscv64gc-unknown-none-elf/release/ch7b_cat target/riscv64gc-unknown-none-elf/release/ch7b_initproc target/riscv64gc-unknown-none-elf/release/ch7b_pipe_large_test target/riscv64gc-unknown-none-elf/release/ch7b_pipetest target/riscv64gc-unknown-none-elf/release/ch7b_run_pipe_test target/riscv64gc-unknown-none-elf/release/ch7b_sig_simple target/riscv64gc-unknown-none-elf/release/ch7b_sig_simple2 target/riscv64gc-unknown-none-elf/release/ch7b_sig_tests target/riscv64gc-unknown-none-elf/release/ch7b_user_shell target/riscv64gc-unknown-none-elf/release/ch7b_usertest target/riscv64gc-unknown-none-elf/release/ch7b_yield target/riscv64gc-unknown-none-elf/release/ch8_deadlock_mutex1 target/riscv64gc-unknown-none-elf/release/ch8_deadlock_sem1 target/riscv64gc-unknown-none-elf/release/ch8_deadlock_sem2 target/riscv64gc-unknown-none-elf/release/ch8_usertest target/riscv64gc-unknown-none-elf/release/ch8b_initproc target/riscv64gc-unknown-none-elf/release/ch8b_mpsc_sem target/riscv64gc-unknown-none-elf/release/ch8b_phil_din_mutex target/riscv64gc-unknown-none-elf/release/ch8b_race_adder target/riscv64gc-unknown-none-elf/release/ch8b_race_adder_atomic target/riscv64gc-unknown-none-elf/release/ch8b_race_adder_loop target/riscv64gc-unknown-none-elf/release/ch8b_race_adder_mutex_spin target/riscv64gc-unknown-none-elf/release/ch8b_stackful_coroutine target/riscv64gc-unknown-none-elf/release/ch8b_stackless_coroutine target/riscv64gc-unknown-none-elf/release/ch8b_sync_sem target/riscv64gc-unknown-none-elf/release/ch8b_test_condvar target/riscv64gc-unknown-none-elf/release/ch8b_threads target/riscv64gc-unknown-none-elf/release/ch8b_threads_arg target/riscv64gc-unknown-none-elf/release/ch8b_user_shell target/riscv64gc-unknown-none-elf/release/ch8b_usertest
+    Blocking waiting for file lock on package cache
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+     Locking 8 packages to latest compatible versions
+      Adding bitflags v1.3.2 (latest: v2.13.2)
+      Adding buddy_system_allocator v0.6.0 (latest: v0.13.0)
+      Adding lock_api v0.4.6 (latest: v0.5.0)
+      Adding spin v0.7.2 (latest: v0.12.3)
+      Adding spin v0.9.9 (latest: v0.12.3)
+    Blocking waiting for file lock on package cache
+   Compiling scopeguard v1.2.0
+   Compiling spin v0.7.2
+   Compiling bitflags v1.3.2
+   Compiling lock_api v0.4.6
+   Compiling buddy_system_allocator v0.6.0
+   Compiling spin v0.9.9
+   Compiling lazy_static v1.5.1
+   Compiling user_lib v0.1.0 (./ch8/ci-user/user)
+warning: Rust ABI is unsupported in naked functions
+   --> src/bin/ch8b_stackful_coroutine.rs:259:1
+    |
+259 | unsafe fn switch(old: *mut TaskContext, new: *const TaskContext) {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(undefined_naked_function_abi)]` on by default
+
+warning: field `id` is never read
+  --> src/bin/ch8b_stackful_coroutine.rs:36:5
+   |
+35 | struct Task {
+   |        ---- field in this struct
+36 |     id: usize,
+   |     ^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: creating a mutable reference to mutable static is discouraged
+  --> src/bin/ch8b_race_adder_mutex_spin.rs:20:17
+   |
+20 |         let a = &mut A as *mut usize;
+   |                 ^^^^^^ mutable reference to mutable static
+   |
+   = note: for more information, see issue #114447 <https://github.com/rust-lang/rust/issues/114447>
+   = note: this will be a hard error in the 2024 edition
+   = note: this mutable reference has lifetime `'static`, but if the static gets accessed (read or written) by any other means, or any other reference is created, then any further use of this mutable reference is Undefined Behavior
+   = note: `#[warn(static_mut_refs)]` on by default
+help: use `addr_of_mut!` instead to create a raw pointer
+   |
+20 |         let a = addr_of_mut!(A) as *mut usize;
+   |                 ~~~~~~~~~~~~~~~
+
+warning: `user_lib` (bin "ch8b_stackful_coroutine") generated 2 warnings
+warning: creating a mutable reference to mutable static is discouraged
+  --> src/bin/ch8b_race_adder.rs:18:17
+   |
+18 |         let a = &mut A as *mut usize;
+   |                 ^^^^^^ mutable reference to mutable static
+   |
+   = note: for more information, see issue #114447 <https://github.com/rust-lang/rust/issues/114447>
+   = note: this will be a hard error in the 2024 edition
+   = note: this mutable reference has lifetime `'static`, but if the static gets accessed (read or written) by any other means, or any other reference is created, then any further use of this mutable reference is Undefined Behavior
+   = note: `#[warn(static_mut_refs)]` on by default
+help: use `addr_of_mut!` instead to create a raw pointer
+   |
+18 |         let a = addr_of_mut!(A) as *mut usize;
+   |                 ~~~~~~~~~~~~~~~
+
+warning: `user_lib` (bin "ch8b_race_adder_mutex_spin") generated 1 warning
+warning: `user_lib` (bin "ch8b_race_adder") generated 1 warning
+warning: creating a mutable reference to mutable static is discouraged
+  --> src/bin/ch8b_race_adder_atomic.rs:26:17
+   |
+26 |         let a = &mut A as *mut usize;
+   |                 ^^^^^^ mutable reference to mutable static
+   |
+   = note: for more information, see issue #114447 <https://github.com/rust-lang/rust/issues/114447>
+   = note: this will be a hard error in the 2024 edition
+   = note: this mutable reference has lifetime `'static`, but if the static gets accessed (read or written) by any other means, or any other reference is created, then any further use of this mutable reference is Undefined Behavior
+   = note: `#[warn(static_mut_refs)]` on by default
+help: use `addr_of_mut!` instead to create a raw pointer
+   |
+26 |         let a = addr_of_mut!(A) as *mut usize;
+   |                 ~~~~~~~~~~~~~~~
+
+warning: unused import: `get_time`
+  --> src/bin/ch7b_pipe_large_test.rs:10:29
+   |
+10 | use user_lib::{close, fork, get_time, pipe, read, wait, write,getpid};
+   |                             ^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: `user_lib` (bin "ch8b_race_adder_atomic") generated 1 warning
+warning: creating a mutable reference to mutable static is discouraged
+  --> src/bin/ch8b_race_adder_loop.rs:24:17
+   |
+24 |         let a = &mut A as *mut usize;
+   |                 ^^^^^^ mutable reference to mutable static
+   |
+   = note: for more information, see issue #114447 <https://github.com/rust-lang/rust/issues/114447>
+   = note: this will be a hard error in the 2024 edition
+   = note: this mutable reference has lifetime `'static`, but if the static gets accessed (read or written) by any other means, or any other reference is created, then any further use of this mutable reference is Undefined Behavior
+   = note: `#[warn(static_mut_refs)]` on by default
+help: use `addr_of_mut!` instead to create a raw pointer
+   |
+24 |         let a = addr_of_mut!(A) as *mut usize;
+   |                 ~~~~~~~~~~~~~~~
+
+warning: `user_lib` (bin "ch7b_pipe_large_test") generated 1 warning (run `cargo fix --bin "ch7b_pipe_large_test"` to apply 1 suggestion)
+warning: `user_lib` (bin "ch8b_race_adder_loop") generated 1 warning
+    Finished `release` profile [optimized] target(s) in 4.83s
+make[1]: Leaving directory './ch8/ci-user/user'
+cp -f user/build/elf/ch8_usertest.elf user/build/elf/ch8b_initproc.elf
+make -C ../os run OFFLINE= | tee stdout-ch8
+make[1]: Entering directory './ch8/os'
+cd ../easy-fs-fuse && cargo run --release -- \
+	-s ../ci-user/user/build/elf \
+	-o ../ci-user/user/build/fs.img
+    Blocking waiting for file lock on package cache
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+     Locking 31 packages to latest compatible versions
+      Adding bitflags v1.3.2 (latest: v2.13.2)
+      Adding clap v2.34.0 (latest: v4.6.10)
+      Adding getrandom v0.2.17 (latest: v0.4.3)
+      Adding hermit-abi v0.1.19 (latest: v0.5.3)
+      Adding rand v0.8.8 (latest: v0.10.4)
+      Adding rand_chacha v0.3.1 (latest: v0.10.0)
+      Adding rand_core v0.6.4 (latest: v0.10.1)
+      Adding spin v0.7.2 (latest: v0.12.3)
+      Adding spin v0.9.9 (latest: v0.12.3)
+      Adding strsim v0.8.0 (latest: v0.11.1)
+      Adding syn v2.0.119 (latest: v3.0.10)
+      Adding textwrap v0.11.0 (latest: v0.16.4)
+      Adding unicode-width v0.1.14 (latest: v0.2.3)
+      Adding wasi v0.11.1+wasi-snapshot-preview1 (latest: v0.14.7+wasi-0.2.4)
+    Blocking waiting for file lock on package cache
+   Compiling libc v0.2.191
+   Compiling zerocopy v0.8.66
+   Compiling cfg-if v1.0.5
+   Compiling spin v0.9.9
+   Compiling unicode-width v0.1.14
+   Compiling ansi_term v0.12.1
+   Compiling strsim v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling vec_map v0.8.2
+   Compiling spin v0.7.2
+   Compiling lazy_static v1.5.1
+   Compiling easy-fs v0.1.0 (./ch8/easy-fs)
+   Compiling textwrap v0.11.0
+   Compiling getrandom v0.2.17
+   Compiling atty v0.2.14
+   Compiling clap v2.34.0
+   Compiling rand_core v0.6.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.3.1
+   Compiling rand v0.8.8
+   Compiling easy-fs-fuse v0.1.0 (./ch8/easy-fs-fuse)
+    Finished `release` profile [optimized] target(s) in 7.40s
+     Running `target/release/easy-fs-fuse -s ../ci-user/user/build/elf -o ../ci-user/user/build/fs.img`
+src_path = ../ci-user/user/build/elf
+output_path = ../ci-user/user/build/fs.img
+ch4_unmap
+ch6_file3
+ch6_file2
+ch7b_sig_simple
+ch7b_user_shell
+ch8_deadlock_sem2
+ch6b_user_shell
+ch7b_yield
+ch4_trace1
+ch5_stride4
+ch8b_race_adder_atomic
+ch8b_phil_din_mutex
+ch8b_stackless_coroutine
+ch3b_yield0
+ch6b_filetest_simple
+ch5b_user_shell
+ch7b_initproc
+ch3b_yield1
+ch3b_yield2
+ch3_sleep
+ch5b_usertest
+ch7b_pipetest
+ch5_stride2
+ch7b_run_pipe_test
+ch5b_exit
+ch5_stride5
+ch6_usertest
+ch2b_bad_register
+ch7b_cat
+ch5b_forktest_simple
+ch7b_pipe_large_test
+ch4b_sbrk
+ch7b_sig_simple2
+ch5b_initproc
+ch8b_mpsc_sem
+ch2b_bad_address
+ch6b_initproc
+ch4_mmap2
+ch8b_race_adder
+ch8b_race_adder_loop
+ch5_usertest
+ch4_unmap2
+ch5b_forktest2
+ch8_deadlock_sem1
+ch7_usertest
+ch8_deadlock_mutex1
+ch6b_usertest
+ch4_mmap3
+ch5_stride3
+ch5b_forktest
+ch5_exit1
+ch4_mmap0
+ch8b_stackful_coroutine
+ch7b_sig_tests
+ch5_exit0
+ch6_file0
+ch5_setprio
+ch2b_bad_instructions
+ch8b_threads_arg
+ch6b_cat
+ch5b_forktree
+ch5_spawn0
+ch8b_threads
+ch8b_usertest
+ch8_usertest
+ch6_file1
+ch7b_usertest
+ch8b_sync_sem
+ch8b_user_shell
+ch2b_hello_world
+ch5_stride
+ch5_getpid
+ch5_spawn1
+ch8b_race_adder_mutex_spin
+ch8b_test_condvar
+ch5_stride1
+ch5_stride0
+ch2b_power_7
+ch3_sleep1
+ch2b_power_5
+ch3_trace
+ch8b_initproc
+ch4_mmap1
+ch2b_power_3
+cargo build --release
+    Updating crates.io index
+    Updating git repository `https://github.com/rcore-os/riscv`
+    Updating git repository `https://github.com/rcore-os/virtio-drivers`
+    Blocking waiting for file lock on package cache
+     Locking 24 packages to latest compatible versions
+      Adding bare-metal v0.2.5 (latest: v1.0.0)
+      Adding bitflags v1.3.2 (latest: v2.13.2)
+      Adding buddy_system_allocator v0.6.0 (latest: v0.13.0)
+      Adding rustc_version v0.2.3 (latest: v0.4.1)
+      Adding semver v0.9.0 (latest: v1.0.28)
+      Adding semver-parser v0.7.0 (latest: v0.10.3)
+      Adding spin v0.7.2 (latest: v0.12.3)
+      Adding spin v0.9.9 (latest: v0.12.3)
+      Adding volatile v0.3.0 (latest: v0.6.1)
+      Adding xmas-elf v0.7.0 (latest: v0.10.0)
+    Blocking waiting for file lock on package cache
+   Compiling memchr v2.8.3
+   Compiling semver-parser v0.7.0
+   Compiling regex-syntax v0.8.12
+   Compiling lazy_static v1.5.1
+   Compiling spin v0.9.9
+   Compiling bitflags v1.3.2
+   Compiling log v0.4.35
+   Compiling spin v0.7.2
+   Compiling zero v0.1.3
+   Compiling bit_field v0.10.4
+   Compiling volatile v0.3.0
+   Compiling os v0.1.0 (./ch8/os)
+   Compiling xmas-elf v0.7.0
+   Compiling buddy_system_allocator v0.6.0
+   Compiling easy-fs v0.1.0 (./ch8/easy-fs)
+   Compiling semver v0.9.0
+   Compiling virtio-drivers v0.1.0 (https://github.com/rcore-os/virtio-drivers?rev=4ee80e5#4ee80e50)
+   Compiling rustc_version v0.2.3
+   Compiling bare-metal v0.2.5
+   Compiling aho-corasick v1.1.5
+   Compiling regex-automata v0.4.19
+   Compiling regex v1.13.2
+   Compiling riscv-target v0.1.2
+   Compiling riscv v0.6.0 (https://github.com/rcore-os/riscv#11d43cf7)
+    Finished `release` profile [optimized] target(s) in 9.84s
+timeout --foreground 30s qemu-system-riscv64 \
+	-machine virt \
+	-nographic \
+	-bios ../bootloader/rustsbi-qemu.bin \
+	-kernel target/riscv64gc-unknown-none-elf/release/os \
+	-drive file=../ci-user/user/build/fs.img,if=none,format=raw,id=x0 \
+	-device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+[RustSBI] INFO  - Hello RustSBI!
+[RustSBI] INFO  - RustSBI version 0.4.1
+[RustSBI] INFO  - .______       __    __      _______.___________.  _______..______   __
+[RustSBI] INFO  - |   _  \     |  |  |  |    /       |           | /       ||   _  \ |  |
+[RustSBI] INFO  - |  |_)  |    |  |  |  |   |   (----`---|  |----`|   (----`|  |_)  ||  |
+[RustSBI] INFO  - |      /     |  |  |  |    \   \       |  |      \   \    |   _  < |  |
+[RustSBI] INFO  - |  |\  \----.|  `--'  |.----)   |      |  |  .----)   |   |  |_)  ||  |
+[RustSBI] INFO  - | _| `._____| \______/ |_______/       |__|  |_______/    |______/ |__|
+[RustSBI] INFO  - Initializing RustSBI machine-mode environment.
+[RustSBI] INFO  - Platform Name                 : riscv-virtio,qemu
+[RustSBI] INFO  - Platform HART Count           : 1
+[RustSBI] INFO  - Enabled HARTs                 : [0]
+[RustSBI] INFO  - Platform IPI Extension        : SiFiveClint (Base Address: 0x2000000)
+[RustSBI] INFO  - Platform Console Extension    : Uart16550U8 (Base Address: 0x10000000)
+[RustSBI] INFO  - Platform Reset Extension      : Available (Base Address: 0x100000)
+[RustSBI] INFO  - Platform HSM Extension        : Available
+[RustSBI] INFO  - Platform RFence Extension     : Available
+[RustSBI] INFO  - Platform SUSP Extension       : Available
+[RustSBI] INFO  - Platform PMU Extension        : Available
+[RustSBI] INFO  - Memory range                  : 0x80000000 - 0x88000000
+[RustSBI] INFO  - Platform Status               : Platform initialization complete and ready.
+[RustSBI] INFO  - PMP Configuration
+[RustSBI] INFO  - PMP   Range      Permission      Address
+[RustSBI] INFO  - 0     OFF        NONE            0x0000000000000000
+[RustSBI] INFO  - 1     TOR        RWX             0x0000000080000000
+[RustSBI] INFO  - 2     TOR        RWX             0x0000000080000000
+[RustSBI] INFO  - 3     TOR        R               0x0000000080028000
+[RustSBI] INFO  - 4     TOR        NONE            0x0000000080036000
+[RustSBI] INFO  - 5     TOR        RW              0x0000000080071000
+[RustSBI] INFO  - 6     TOR        RWX             0x0000000088000000
+[RustSBI] INFO  - 7     TOR        RWX             0x00fffffffffffffc
+[RustSBI] INFO  - Boot HART ID                  : 0
+[RustSBI] INFO  - Boot HART Privileged Version: : Version1_12
+[RustSBI] INFO  - Boot HART MHPM Mask:          : 0x07ffff
+[RustSBI] INFO  - The patched dtb is located at 0x8005c000 with length 0x15e0.
+[RustSBI] INFO  - Redirecting hart 0 to 0x00000080200000 in Supervisor mode.
+[kernel] Hello, world!
+remap_test passed!
+/**** APPS ****
+ch4_unmap
+ch6_file3
+ch6_file2
+ch7b_sig_simple
+ch7b_user_shell
+ch8_deadlock_sem2
+ch6b_user_shell
+ch7b_yield
+ch4_trace1
+ch5_stride4
+ch8b_race_adder_atomic
+ch8b_phil_din_mutex
+ch8b_stackless_coroutine
+ch3b_yield0
+ch6b_filetest_simple
+ch5b_user_shell
+ch7b_initproc
+ch3b_yield1
+ch3b_yield2
+ch3_sleep
+ch5b_usertest
+ch7b_pipetest
+ch5_stride2
+ch7b_run_pipe_test
+ch5b_exit
+ch5_stride5
+ch6_usertest
+ch2b_bad_register
+ch7b_cat
+ch5b_forktest_simple
+ch7b_pipe_large_test
+ch4b_sbrk
+ch7b_sig_simple2
+ch5b_initproc
+ch8b_mpsc_sem
+ch2b_bad_address
+ch6b_initproc
+ch4_mmap2
+ch8b_race_adder
+ch8b_race_adder_loop
+ch5_usertest
+ch4_unmap2
+ch5b_forktest2
+ch8_deadlock_sem1
+ch7_usertest
+ch8_deadlock_mutex1
+ch6b_usertest
+ch4_mmap3
+ch5_stride3
+ch5b_forktest
+ch5_exit1
+ch4_mmap0
+ch8b_stackful_coroutine
+ch7b_sig_tests
+ch5_exit0
+ch6_file0
+ch5_setprio
+ch2b_bad_instructions
+ch8b_threads_arg
+ch6b_cat
+ch5b_forktree
+ch5_spawn0
+ch8b_threads
+ch8b_usertest
+ch8_usertest
+ch6_file1
+ch7b_usertest
+ch8b_sync_sem
+ch8b_user_shell
+ch2b_hello_world
+ch5_stride
+ch5_getpid
+ch5_spawn1
+ch8b_race_adder_mutex_spin
+ch8b_test_condvar
+ch5_stride1
+ch5_stride0
+ch2b_power_7
+ch3_sleep1
+ch2b_power_5
+ch3_trace
+ch8b_initproc
+ch4_mmap1
+ch2b_power_3
+**************/
+Usertests: Running ch2b_hello_world\0
+Usertests: Running ch2b_power_3\0
+Usertests: Running ch2b_power_5\0
+Usertests: Running ch2b_power_7\0
+Usertests: Running ch3b_yield0\0
+Usertests: Running ch3b_yield1\0
+Usertests: Running ch3b_yield2\0
+Usertests: Running ch5b_exit\0
+Usertests: Running ch5b_forktest_simple\0
+Usertests: Running ch5b_forktest\0
+Usertests: Running ch5b_forktest2\0
+Usertests: Running ch6b_filetest_simple\0
+Hello, world from user mode program!
+power_3 [10000/200000]
+power_3 [20000/200000]
+power_3 [30000/200000]
+power_3 [40000/200000]
+power_3 [50000/200000]
+power_3 [60000/200000]
+power_3 [70000/200000]
+power_5 [10000/140000]
+power_5 [20000/140000]
+power_5 [30000/140000]
+power_5 [40000/140000]
+power_5 [50000/140000]
+power_5 [60000/140000]
+power_5 [70000/140000]
+power_5 [80000/140000]
+power_5 [90000/140000]
+power_5 [100000/140000]
+power_5 [110000/140000]
+power_5 [120000/140000]
+power_5 [130000/140000]
+power_5 [140000/140000]
+5^140000 = 386471875(MOD 998244353)
+power_7 [10000/160000]
+power_7 [20000/160000]
+power_7 [30000/160000]
+power_7 [40000/160000]
+power_7 [50000/160000]
+power_7 [60000/160000]
+power_7 [70000/160000]
+power_7 [80000/160000]
+power_7 [90000/160000]
+power_7 [100000/160000]
+power_7 [110000/160000]
+power_7 [120000/160000]
+power_7 [130000/160000]
+power_7 [140000/160000]
+power_7 [150000/160000]
+power_7 [160000/160000]
+AAAAAAAAAA [1/5]
+BBBBBBBBBB [1/5]
+CCCCCCCCCC [1/5]
+I am the parent. Forking the child...
+I am parent, fork a child pid 12
+I am the parent, waiting now..
+forked child pid = 13
+forked child pid = 14
+forked child pid = 15
+forked child pid = 16
+forked child pid = 17
+forked child pid = 18
+forked child pid = 19
+forked child pid = 20
+forked child pid = 21
+forked child pid = 22
+forked child pid = 23
+forked child pid = 24
+forked child pid = 25
+forked child pid = 26
+forked child pid = 27
+forked child pid = 28
+forked child pid = 29
+Usertests: Running ch7b_pipetest\0
+Usertests: Running ch8_deadlock_mutex1\0
+Usertests: Running ch8_deadlock_sem1\0
+Usertests: Running ch8_deadlock_sem2\0
+Usertests: Running ch8b_mpsc_sem\0
+Usertests: Running ch8b_phil_din_mutex\0
+Usertests: Running ch8b_race_adder_mutex_spin\0
+Usertests: Running ch8b_sync_sem\0
+Usertests: Running ch8b_test_condvar\0
+power_3 [80000/200000]
+power_3 [90000/200000]
+power_3 [100000/200000]
+power_3 [110000/200000]
+power_3 [120000/200000]
+power_3 [130000/200000]
+power_3 [140000/200000]
+power_3 [150000/200000]
+power_3 [160000/200000]
+power_3 [170000/200000]
+power_3 [180000/200000]
+power_3 [190000/200000]
+power_3 [200000/200000]
+3^200000 = 871008973(MOD 998244353)
+Test power_3 OK1419!
+Test power_5 OK1419!
+7^160000 = 667897727(MOD 998244353)
+Test power_7 OK1419!
+AAAAAAAAAA [2/5]
+BBBBBBBBBB [2/5]
+CCCCCCCCCC [2/5]
+I am the child.
+sys_wait without child process test passed1419!
+parent start, pid = 9!
+ready waiting on parent process!
+I am child 0
+I am child 1
+I am child 2
+I am child 3
+I am child 4
+I am child 5
+I am child 6
+I am child 8
+I am child 9
+I am child 10
+I am child 11
+I am child 12
+I am child 13
+I am child 14
+I am child 15
+I am child 16
+forked child pid = 70
+forked child pid = 71
+forked child pid = 72
+forked child pid = 73
+pid 30 sleep for 1584 ms
+pid 31 sleep for 1929 ms
+pid 32 sleep for 1276 ms
+pid 33 sleep for 1625 ms
+pid 34 sleep for 1976 ms
+pid 35 sleep for 1329 ms
+pid 36 sleep for 1684 ms
+pid 37 sleep for 1041 ms
+pid 38 sleep for 1400 ms
+pid 39 sleep for 1761 ms
+pid 40 sleep for 1124 ms
+pid 41 sleep for 1489 ms
+pid 42 sleep for 1856 ms
+pid 43 sleep for 1225 ms
+pid 44 sleep for 1596 ms
+pid 45 sleep for 1969 ms
+pid 46 sleep for 1344 ms
+pid 47 sleep for 1721 ms
+pid 48 sleep for 1481 ms
+pid 49 sleep for 1864 ms
+pid 50 sleep for 1249 ms
+pid 51 sleep for 1636 ms
+pid 52 sleep for 1025 ms
+pid 53 sleep for 1416 ms
+pid 54 sleep for 1809 ms
+pid 55 sleep for 1204 ms
+pid 56 sleep for 1601 ms
+pid 57 sleep for 1000 ms
+pid 58 sleep for 1401 ms
+pid 59 sleep for 1804 ms
+deadlock test mutex 1 OK1419!
+Here comes 5 philosophers!
+AAAAAAAAAA [3/5]
+BBBBBBBBBB [3/5]
+CCCCCCCCCC [3/5]
+hello child process!
+child process pid = 69, exit code = 100
+I am child 7
+I am child 17
+I am child 18
+I am child 19
+I am child 20
+I am child 21
+forked child pid = 74
+forked child pid = 69
+forked child pid = 77
+file_test passed1419!
+Read OK1419, child process exited!
+pipetest passed1419!
+thread 1 running
+thread 2 running
+thread 3 running
+Second want to continue,but need to wait first
+Usertests: Running ch8b_threads\0
+Usertests: Running ch8b_threads_arg\0
+Usertests: Test ch2b_hello_world\0 in Process 1 exited with code 0
+Usertests: Test ch2b_power_3\0 in Process 2 exited with code 0
+Usertests: Test ch2b_power_5\0 in Process 3 exited with code 0
+AAAAAAAAAA [4/5]
+BBBBBBBBBB [4/5]
+CCCCCCCCCC [4/5]
+I am child 22
+I am child 23
+I am child 24
+forked child pid = 78
+forked child pid = 3
+forked child pid = 2
+forked child pid = 1
+forked child pid = 80
+forked child pid = 81
+forked child pid = 82
+forked child pid = 83
+forked child pid = 84
+Second want to continue,but need to wait A=1
+Second: A is 0
+First work and wakeup Second
+Usertests: Test ch2b_power_7\0 in Process 4 exited with code 0
+AAAAAAAAAA [5/5]
+BBBBBBBBBB [5/5]
+CCCCCCCCCC [5/5]
+I am child 25
+I am child 26
+I am child 27
+I am child 28
+I am child 29
+I am child 30
+I am child 31
+I am child 32
+forked child pid = 4
+forked child pid = 85
+forked child pid = 86
+forked child pid = 87
+forked child pid = 88
+forked child pid = 89
+forked child pid = 90
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaSecond can work now
+Test write A OK1419!
+Test write B OK1419!
+Test write C OK1419!
+First work, Change A --> 1 and wakeup Second
+I am child 33
+I am child 34
+I am child 35
+I am child 36
+I am child 37
+I am child 38
+I am child 39
+forktest pass.
+sync_sem passed1419!
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbUsertests: Test ch3b_yield0\0 in Process 5 exited with code 0
+Usertests: Test ch3b_yield1\0 in Process 6 exited with code 0
+Usertests: Test ch3b_yield2\0 in Process 7 exited with code 0
+A is 1, Second can work now
+test_condvar passed1419!
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccthread#1 exited with code 1
+thread#2 exited with code 2
+thread#3 exited with code 3
+main thread exited.
+threads with arg test passed1419!
+waitpid 12 ok.
+exit pass.
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3754
+Usertests: Test ch5b_exit\0 in Process 8 exited with code 0
+Usertests: Test ch5b_forktest_simple\0 in Process 9 exited with code 0
+Usertests: Test ch5b_forktest\0 in Process 10 exited with code 0
+bbbbbbbbbbbbbbbbbbbbbbbbbb3754
+ccccccc3754
+thread#1 exited with code 1
+thread#2 exited with code 2
+thread#3 exited with code 3
+main thread exited.
+threads test passed1419!
+Deadlock detected. Test 08_sem1 failed!
+thread 2 exited
+thread 1 exited
+deadlock test semaphore 1 OK1419!
+time cost is 864ms
+race adder using spin mutex test passed1419!
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 0 0 0 1 2 3 0 0 1 1 1 1 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 3 3 3 3 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 2 2 2 2 2 3 1 2 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 3 3 3 3 3 3 3 1 pid 57 OK1419!
+3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+mpsc_sem passed1419!
+pid 52 OK1419!
+pid 37 OK1419!
+deadlock test semaphore 2 OK1419!
+pid 40 OK1419!
+time cost = 1167
+'-' -> THINKING; 'x' -> EATING; ' ' -> WAITING
+#0:   -----------------                                           xxxxxxxxxx------------    xxxxx-----   xxxxxxx-- xxxx
+#1:   -------xxxxxxxxxxxxxx-------------               xxxxxxxx-----------                xx-----xxxxxx
+#2:   -----------------                         xxxxxx---------xxx--------        xxxxxxx------------  xxxxx
+#3:   -----------------xxxxxxxxxxxxxxxxxxxx----------- xxxxx----------xxxxxxxxx---        xxxxxxxxx
+pid 55 OK1419!
+#4:   -----------------                         xxxxxx------                      xxxxxxx---       xxxxxx-------xxx
+#0:   -----------------                                           xxxxxxxxxx------------    xxxxx-----   xxxxxxx-- xxxx
+philosopher dining problem with mutex test passed1419!
+pid 43 OK1419!
+pid 50 OK1419!
+pid 32 OK1419!
+pid 35 OK1419!
+pid 46 OK1419!
+pid 38 OK1419!
+pid 58 OK1419!
+pid 53 OK1419!
+pid 48 OK1419!
+pid 41 OK1419!
+pid 30 OK1419!
+pid 44 OK1419!
+pid 56 OK1419!
+pid 33 OK1419!
+pid 51 OK1419!
+pid 36 OK1419!
+pid 47 OK1419!
+pid 39 OK1419!
+pid 54 OK1419!
+pid 42 OK1419!
+pid 59 OK1419!
+pid 31 OK1419!
+pid 49 OK1419!
+pid 34 OK1419!
+pid 45 OK1419!
+forktest2 test passed1419!
+Usertests: Test ch5b_forktest2\0 in Process 11 exited with code 0
+Usertests: Test ch6b_filetest_simple\0 in Process 60 exited with code 0
+Usertests: Test ch7b_pipetest\0 in Process 61 exited with code 0
+Usertests: Test ch8_deadlock_mutex1\0 in Process 62 exited with code 0
+Usertests: Test ch8_deadlock_sem1\0 in Process 63 exited with code 0
+Usertests: Test ch8_deadlock_sem2\0 in Process 64 exited with code 0
+Usertests: Test ch8b_mpsc_sem\0 in Process 65 exited with code 0
+Usertests: Test ch8b_phil_din_mutex\0 in Process 66 exited with code 0
+Usertests: Test ch8b_race_adder_mutex_spin\0 in Process 67 exited with code 0
+Usertests: Test ch8b_sync_sem\0 in Process 68 exited with code 0
+Usertests: Test ch8b_test_condvar\0 in Process 76 exited with code 0
+Usertests: Test ch8b_threads\0 in Process 75 exited with code 0
+Usertests: Test ch8b_threads_arg\0 in Process 79 exited with code 0
+ch8 Usertests passed1419!
+[kernel] Idle process exit with exit_code 0 ...
+make[1]: Leaving directory './ch8/os'
+python3 check/ch8.py < stdout-ch8 || (\
+	make restore ; \
+	exit 1 ; \
+)
+['deadlock test semaphore 2 OK1419!', 'Test write B OK1419!', 'pipetest passed1419!', 'race adder using spin mutex test passed1419!', 'child process pid = (\\d+), exit code = (\\d+)', 'Test power_3 OK1419!', 'file_test passed1419!', 'Hello, world from user mode program!', 'exit pass.', 'philosopher dining problem with mutex test passed1419!', 'test_condvar passed1419!', 'forktest pass.', 'deadlock test semaphore 1 OK1419!', 'Test write A OK1419!', 'Test power_7 OK1419!', 'deadlock test mutex 1 OK1419!', 'Test power_5 OK1419!', 'hello child process!', 'Test write C OK1419!', 'threads with arg test passed1419!', 'sync_sem passed1419!', 'threads test passed1419!', 'mpsc_sem passed1419!'] ['FAIL: T.T', 'Test sbrk failed!']
+[PASS] found <deadlock test semaphore 2 OK1419!>
+[PASS] found <Test write B OK1419!>
+[PASS] found <pipetest passed1419!>
+[PASS] found <race adder using spin mutex test passed1419!>
+[PASS] found <child process pid = (\d+), exit code = (\d+)>
+[PASS] found <Test power_3 OK1419!>
+[PASS] found <file_test passed1419!>
+[PASS] found <Hello, world from user mode program!>
+[PASS] found <exit pass.>
+[PASS] found <philosopher dining problem with mutex test passed1419!>
+[PASS] found <test_condvar passed1419!>
+[PASS] found <forktest pass.>
+[PASS] found <deadlock test semaphore 1 OK1419!>
+[PASS] found <Test write A OK1419!>
+[PASS] found <Test power_7 OK1419!>
+[PASS] found <deadlock test mutex 1 OK1419!>
+[PASS] found <Test power_5 OK1419!>
+[PASS] found <hello child process!>
+[PASS] found <Test write C OK1419!>
+[PASS] found <threads with arg test passed1419!>
+[PASS] found <sync_sem passed1419!>
+[PASS] found <threads test passed1419!>
+[PASS] found <mpsc_sem passed1419!>
+[PASS] not found <FAIL: T.T>
+[PASS] not found <Test sbrk failed!>
+
+Test passed1419: 25/25
+make restore
+make[1]: Entering directory './ch8/ci-user'
+Restoring original files from temp-* dirs
+make[1]: Leaving directory './ch8/ci-user'
+Report for lab1 found.
+Report for lab2 found.
+Report for lab3 found.
+Report for lab4 found.
+Report for lab5 found.
+make: Leaving directory './ch8/ci-user'
